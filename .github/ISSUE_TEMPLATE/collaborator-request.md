@@ -15,3 +15,4 @@ Email: [Email]
 Add an X within the brackets below if they apply to you:
 [] - Gibson Ek Student
 [] - GE Robotics Club Member
+[] - I would like to be an admin
