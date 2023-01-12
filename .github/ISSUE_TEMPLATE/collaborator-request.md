@@ -9,10 +9,10 @@ assignees: NomsterDude
 
 Replace all placeholders ("[Details]") with your details:
 Name: [Name]
-Username: [Username]
+GitHub Username: [Username]
 Email: [Email]
 
-Add an X within the brackets below if they apply to you:
-[] - Gibson Ek Student
-[] - GE Robotics Club Member
-[] - I would like to be an admin
+Replace the spaces with an X in the brackets below if they apply to you:
+- [ ] Gibson Ek Student
+- [ ] GE Robotics Club Member
+- [ ] I would like to be an admin
