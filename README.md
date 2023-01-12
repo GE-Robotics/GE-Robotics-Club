@@ -1,12 +1,11 @@
 <div id="top"></div>
 
 <!-- PROJECT SHIELDS -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Contributors][contributors-shield]][https://github.com/GE-Robotics/GE-Robotics-Club]
+[![Forks][forks-shield]][https://github.com/GE-Robotics/GE-Robotics-Club]
+[![Stargazers][stars-shield]][https://github.com/GE-Robotics/GE-Robotics-Club]
+[![Issues][issues-shield]][https://github.com/GE-Robotics/GE-Robotics-Club]
+[![MIT License][license-shield]][https://github.com/GE-Robotics/GE-Robotics-Club]
 
 
 
