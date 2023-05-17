@@ -49,7 +49,11 @@ public class DriveTrain extends LinearOpMode {
     private DcMotor motorRearRight;
     private DcMotor motorFrontLeft;
     private DcMotor motorFrontRight;
-    private Servo servo0;
+    //private Servo servo0;
+
+    //DcMotor.setDirection(DcMotor.Direction.REVERSE)
+
+
 
     @Override
     public void runOpMode() {
@@ -58,8 +62,11 @@ public class DriveTrain extends LinearOpMode {
         motorRearRight = hardwareMap.get(DcMotor.class, "motorRearRight");
         motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
         motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
-        servo0 = hardwareMap.get(Servo.class, "servo0");
-
+        //servo0 = hardwareMap.get(Servo.class, "servo0");
+        motorRearRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        
+        
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -68,54 +75,103 @@ public class DriveTrain extends LinearOpMode {
 
         telemetry.addData("Status", "Robot is moving");
         telemetry.update();
-
-        // run until the end of the match (driver presses STOP)
+        boolean burnOutMode = false;
+        double speed = 3; //1 slow 2 medium 3 fast
+        // run until the end of the match 
+        boolean speed_on = false;
         while (opModeIsActive()) {
             double y; 
             double x;
             double rx;
-            if (gamepad1.left_stick_y < -0.1 || gamepad1.left_stick_y> 0.1){
-                y = -gamepad1.left_stick_y; // Reversed for a reason don't ask me what reason though
+            double leftSticky;
+            double leftStickx;
+            
+            if (gamepad1.b){
+                burnOutMode = true;
+            } else {
+                burnOutMode = false;
+            }
+            if (gamepad1.left_bumper == true && speed > 1){
+                speed -= 1;
+            }
+            if (gamepad1.right_bumper == true && speed < 3){
+                speed += 1;
+            }
+            if (gamepad1.left_stick_y > -0.2 && gamepad1.left_stick_y < 0.2){
+                leftSticky = 0;
+            } else {
+                leftSticky = gamepad1.left_stick_y;
+            }
+            if (gamepad1.left_stick_x > -0.2 && gamepad1.left_stick_x < 0.2){
+                leftStickx = 0;
+            } else {
+                leftStickx = gamepad1.left_stick_x;
+            }
+            if (leftSticky < -0.1 || leftSticky> 0.1){
+                y = -leftSticky; // Reversed for a reason don't ask me what reason though
             } else {
                 y = 0;
             }
-            if (gamepad1.left_stick_x < -0.1 || gamepad1.left_stick_x> 0.1){
-                x = gamepad1.left_stick_x * 1.1; // Reversed for a reason don't ask me what reason though
+            if (leftStickx < -0.1 || leftStickx> 0.1){
+                x = leftStickx * 1.1; // Reversed for a reason don't ask me what reason though
             } else {
                 x = 0;
             }
             if (gamepad1.right_stick_x < -0.1 || gamepad1.right_stick_x > 0.1){
-                rx = gamepad1.right_stick_x; // Reversed for a reason don't ask me what reason though
+                rx = gamepad1.right_stick_x /2; // Reversed for a reason don't ask me what reason though
             } else {
                 rx = 0;
             }
             
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
-
-
+        
+            double frontLeftPower = (y + x + rx) / denominator;// * (speed * (1/3));
+            double backLeftPower = (y - x + rx) / denominator;// * (speed * (1/3));
+            double frontRightPower = (y - x - rx) / denominator;// * (speed * (1/3));
+            double backRightPower = (y + x - rx) / denominator;// * (speed * (1/3));
+            if (burnOutMode == true){
+                
+                frontLeftPower = 0;
+                frontRightPower = 0;
+                if (leftStickx == 0){
+                    frontLeftPower = leftSticky * 0.15;
+                    frontRightPower = leftSticky * 0.15;
+                    //backRightPower = backRightPower * 0.25;
+                }
+            } else {
+                if (speed_on = true) {
+                    frontLeftPower = frontLeftPower * (speed * (1/3));
+                    frontRightPower = frontLeftPower * (speed * (1/3));
+                    backLeftPower = frontLeftPower * (speed * (1/3));
+                    backRightPower = frontLeftPower * (speed * (1/3));
+                }
+            }
             //Servo for the grabber
-            if (gamepad2.b) {
+            //if (gamepad2.b) {
                 //works from 0 to 1
-                servo0.setPosition(0.35);
+                //servo0.setPosition(0.35);
 
-            }
-            if (gamepad2.y) {
+            //}
+            //if (gamepad2.y) {
                 //works from -0 to -1
-                servo0.setPosition(0);
+                //servo0.setPosition(0);
 
-            }
-
+            //}
+            motorRearLeft.setPower(backLeftPower);
+            motorRearRight.setPower(backRightPower);
+            motorFrontLeft.setPower(frontLeftPower);
+            motorFrontRight.setPower(frontRightPower);
+            
+            
+            
             telemetry.addData("Left Stick", gamepad1.left_stick_y);
             telemetry.addData("Right Stick", gamepad1.left_stick_x);
-            //telemetry.addData("Movement motor 0", motorRearLeft.getPower());
-            //telemetry.addData("Movement motor 1", motorRea.getPower());
+            telemetry.addData("Rear left", motorRearLeft.getPower());
+            telemetry.addData("Movement motor 1", motorRearRight.getPower());
+            telemetry.addData("Speed", speed);
             //telemetry.addData("Lifter motor", motor2.getPower());
-            telemetry.addData("Servo", servo0.getPosition());
+            //telemetry.addData("Servo", servo0.getPosition());
             //telemetry.addData("Backup motor", motor3.getPower());
             telemetry.update();
         }
